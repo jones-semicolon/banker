@@ -1,15 +1,13 @@
 package com.jones.banker.controller;
 
 import com.jones.banker.model.Customer;
-import com.jones.banker.model.Transaction;
 import com.jones.banker.service.CustomerService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Controller
 public class CustomerController {
@@ -80,8 +78,13 @@ public class CustomerController {
             return "transfer";
         }
 
-        Customer recipient = service.findByPhone(recipientPhone)
-                .orElseThrow(() -> new RuntimeException("Recipient not found"));
+        Optional<Customer> maybeRecipient = service.findByPhone(recipientPhone);
+        if (maybeRecipient.isEmpty()) {
+            m.addAttribute("error", "Recipient not found");
+            m.addAttribute("customer", sender);
+            return "transfer";
+        }
+        Customer recipient = maybeRecipient.get();
 
         try {
             service.transfer(sender.getId(), recipient.getId(), amount);

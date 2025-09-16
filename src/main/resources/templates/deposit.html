@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Deposit page">
     <title>Deposit — Banker</title>
     <link th:href="@{/css/tailwind.css}" rel="stylesheet"/>
 </head>
 <body class="min-h-screen bg-gray-100">
 <nav class="bg-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-gray-800">Banker</h1>
-        <form th:action="@{/logout}" method="post" class="inline">
-            <button type="submit" class="text-sm text-indigo-600 hover:underline">Logout</button>
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Banker</h1>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit"
+                    class="text-sm font-medium text-indigo-600 hover:text-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded">
+                Logout
+            </button>
         </form>
     </div>
 </nav>
+
 <main class="flex items-center justify-center max-w-md mx-auto mt-10 p-6 space-y-6">
     <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8 space-y-6">
         <h2 class="text-2xl font-bold text-gray-800 text-center">Deposit Funds</h2>
@@ -30,9 +35,21 @@
             </div>
 
             <div>
-                <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-                <input id="amount" name="amount" type="number" step="0.01" min="0.01" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"/>
+                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                <div class="relative rounded-lg shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="text-gray-500">₱</span>
+                    </div>
+                    <input
+                            id="amount"
+                            name="amount"
+                            type="number"
+                            step="0.01"
+                            min="0.01"
+                            required
+                            class="mt-1 block w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                </div>
             </div>
 
             <input type="hidden" name="accountId" th:value="${customer != null ? customer.id : ''}"/>
@@ -44,6 +61,26 @@
 
         <div class="text-sm text-center text-gray-500">
             <a th:href="@{/dashboard}" class="hover:underline">Back to Dashboard</a>
+        </div>
+
+        <!-- Deposit History -->
+
+        <div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Deposit History</h3>
+            <div class="divide-y divide-gray-200 max-h-[35vh] overflow-auto">
+                <div th:each="t : ${customer.transactions.reversed()}" th:if="${t.type.equals('DEPOSIT')}" class="px-4 py-3 flex justify-between items-center">
+                    <div class="flex-1">
+                        <span class="block font-medium text-gray-700" th:text="${t.type}"></span>
+                        <span class="block text-sm text-gray-500" th:text="${#temporals.format(t.timestamp, 'dd-MMM-yyyy')}"></span>
+                    </div>
+                    <div class="text-gray-800 font-semibold">
+                        ₱<span th:text="${t.amount}"></span>
+                    </div>
+                </div>
+                <div th:if="${customer.transactions.isEmpty()}" class="px-4 py-3 text-gray-500 text-center">
+                    No transactions yet.
+                </div>
+            </div>
         </div>
     </div>
 </main>

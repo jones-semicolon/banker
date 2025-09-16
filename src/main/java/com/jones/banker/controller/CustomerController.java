@@ -1,0 +1,125 @@
+package com.jones.banker.controller;
+
+import com.jones.banker.model.Customer;
+import com.jones.banker.model.Transaction;
+import com.jones.banker.service.CustomerService;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Controller
+public class CustomerController {
+    private final CustomerService service;
+    public CustomerController(CustomerService service) { this.service = service; }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Authentication auth, Model model) {
+        String phone = auth.getName();
+        Customer customer = service.findByPhone(phone)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        model.addAttribute("customer", customer);
+        return "dashboard";
+    }
+
+    @GetMapping("/withdraw")
+    public String showWithdrawPage(Authentication auth, Model model) {
+        String phone = auth.getName();
+        Customer customer = service.findByPhone(phone)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        model.addAttribute("customer", customer);
+        return "withdraw";
+    }
+
+    @PostMapping("/withdraw")
+    public String withdraw(
+            @RequestParam String accountId,
+            @RequestParam double amount,
+            Model model
+    ) {
+        try {
+            service.withdraw(accountId, amount);
+            return "redirect:/dashboard";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            // Also need customer in model
+            Customer customer = service.findById(accountId)
+                    .orElseThrow(() -> new RuntimeException("Account not found"));
+            model.addAttribute("customer", customer);
+            return "withdraw";
+        }
+    }
+
+    @GetMapping("/transfer")
+    public String transferForm(Authentication auth, Model model) {
+        String phone = auth.getName();
+        Customer current = service.findByPhone(phone).orElseThrow(() -> new RuntimeException("User not found"));
+        model.addAttribute("customer", current);
+        return "transfer";
+    }
+
+
+    @PostMapping("/transfer")
+    public String transfer(
+            Authentication auth,
+            @RequestParam String recipientPhone,
+            @RequestParam double amount,
+            Model m
+    ) {
+        String fromPhone = auth.getName();
+        Customer sender = service.findByPhone(fromPhone)
+                .orElseThrow(() -> new RuntimeException("Sender not found"));
+
+        // If recipient phone is same as sender's phone, reject
+        if (recipientPhone.equals(fromPhone)) {
+            m.addAttribute("error", "Cannot transfer to your own account");
+            m.addAttribute("customer", sender);
+            return "transfer";
+        }
+
+        Customer recipient = service.findByPhone(recipientPhone)
+                .orElseThrow(() -> new RuntimeException("Recipient not found"));
+
+        try {
+            service.transfer(sender.getId(), recipient.getId(), amount);
+            return "redirect:/dashboard";
+        } catch (Exception e) {
+            m.addAttribute("error", e.getMessage());
+            m.addAttribute("customer", sender);
+            return "transfer";
+        }
+    }
+
+    // Show deposit page
+    @GetMapping("/deposit")
+    public String showDepositPage(Authentication auth, Model model) {
+        String phone = auth.getName();
+        Customer customer = service.findByPhone(phone)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        model.addAttribute("customer", customer);
+        return "deposit";
+    }
+
+    // Handle deposit POST
+    @PostMapping("/deposit")
+    public String deposit(
+            @RequestParam String accountId,
+            @RequestParam double amount,
+            Model model
+    ) {
+        try {
+            service.deposit(accountId, amount);
+            return "redirect:/dashboard";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            // Also need customer in model
+            Customer customer = service.findById(accountId)
+                    .orElseThrow(() -> new RuntimeException("Account not found"));
+            model.addAttribute("customer", customer);
+            return "deposit";
+        }
+    }
+}

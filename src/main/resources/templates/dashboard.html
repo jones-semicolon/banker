@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard — Banker</title>
+    <link th:href="@{/css/tailwind.css}" rel="stylesheet"/>
+</head>
+<body class="min-h-screen bg-gray-100">
+<nav class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-gray-800">Banker</h1>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="text-sm text-indigo-600 hover:underline">Logout</button>
+        </form>
+    </div>
+</nav>
+<main class="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md space-y-8">
+
+    <!-- Greeting / Account Summary -->
+    <div class="space-y-2">
+        <h2 class="text-2xl font-semibold text-gray-800">Welcome, <span th:text="${customer.fullName}"></span></h2>
+        <p class="text-gray-600">Phone: <span th:text="${customer.phone}"></span></p>
+        <p class="text-gray-600">Balance: <span class="text-indigo-700 font-bold">₱<span th:text="${customer.balance}"></span></span></p>
+    </div>
+
+    <!-- Action buttons: Transfer / Deposit / Withdraw -->
+    <div class="flex space-x-4">
+        <!-- Transfer Button -->
+        <a th:href="@{/transfer}"
+           class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            Send/Transfer
+        </a>
+
+        <!-- Deposit Button -->
+        <a th:href="@{/deposit}"
+           class="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500">
+            Deposit
+        </a>
+
+
+        <!-- Withdraw Button -->
+        <a th:href="@{/withdraw}"
+           class="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-red-500">
+            Withdraw
+        </a>
+    </div>
+
+    <!-- Hidden forms for deposit/withdraw (if you prefer POST links) -->
+    <form id="deposit-form" th:action="@{/deposit}" method="post" class="hidden">
+        <input type="hidden" name="accountId" th:value="${customer.id}"/>
+        <input type="hidden" name="amount" value="0"/> <!-- change via JS or direct input when needed -->
+    </form>
+    <form id="withdraw-form" th:action="@{/withdraw}" method="post" class="hidden">
+        <input type="hidden" name="accountId" th:value="${customer.id}"/>
+        <input type="hidden" name="amount" value="0"/>
+    </form>
+
+    <!-- Transaction History -->
+    <div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Transaction History</h3>
+        <div class="divide-y divide-gray-200">
+            <div th:each="t : ${customer.transactions}" class="px-4 py-3 flex justify-between items-center">
+                <div class="flex-1">
+                    <span class="block font-medium text-gray-700" th:text="${t.type}"></span>
+                    <span class="block text-sm text-gray-500" th:text="${t.timestamp}"></span>
+                </div>
+                <div class="text-gray-800 font-semibold">
+                    ₱<span th:text="${t.amount}"></span>
+                </div>
+            </div>
+            <div th:if="${customer.transactions.isEmpty()}" class="px-4 py-3 text-gray-500 text-center">
+                No transactions yet.
+            </div>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

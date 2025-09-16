@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* CSS-first customizations using @theme: define custom CSS variables etc. */
+@theme {
+    /* e.g. override some colors or add custom ones */
+    --color-primary: #3b82f6; /* blue-500 */
+    --color-secondary: #f59e0b; /* amber-500 */
+}
+
+/* You can add base styles here if needed */
+/* e.g. override default font, etc. */
+
+@layer base {
+    button, [role="button"] {
+        cursor: pointer;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+}

@@ -20,62 +20,53 @@
     </div>
 </nav>
 
-<main class="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md space-y-8">
-
+<main class="flex items-center justify-center max-w-[40rem] mx-auto mt-10 p-6 space-y-6">
+    <div class="w-full max-w-[40rem] bg-white rounded-xl shadow-lg p-8 space-y-6">
     <!-- Greeting / Account Summary -->
-    <div class="space-y-2">
-        <h2 class="text-2xl font-semibold text-gray-800">Welcome, <span th:text="${customer.fullName}"></span></h2>
-        <p class="text-gray-600">Phone: <span th:text="${customer.phone}"></span></p>
-        <p class="text-gray-600">Balance: <span class="text-indigo-700 font-bold">₱<span th:text="${customer.balance}"></span></span></p>
-    </div>
+        <div class="space-y-2">
+            <h2 class="text-2xl font-semibold text-gray-800">Welcome, <span th:text="${customer.fullName}"></span></h2>
+            <p class="text-gray-600">Phone: <span th:text="${customer.phone}"></span></p>
+            <p class="text-gray-600">Balance: <span class="text-indigo-700 font-bold">₱<span th:text="${customer.balance}"></span></span></p>
+        </div>
 
-    <!-- Action buttons: Transfer / Deposit / Withdraw -->
-    <div class="flex space-x-4">
-        <!-- Transfer Button -->
-        <a th:href="@{/transfer}"
-           class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            Send/Transfer
-        </a>
+        <!-- Action buttons: Transfer / Deposit / Withdraw -->
+        <div class="flex space-x-4 justify-center items-center">
+            <!-- Transfer Button -->
+            <a th:href="@{/transfer}"
+               class="w-full py-2 px-4 text-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Transfer
+            </a>
 
-        <!-- Deposit Button -->
-        <a th:href="@{/deposit}"
-           class="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500">
-            Deposit
-        </a>
+            <!-- Deposit Button -->
+            <a th:href="@{/deposit}"
+               class="w-full py-2 px-4 text-center bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                Deposit
+            </a>
 
 
-        <!-- Withdraw Button -->
-        <a th:href="@{/withdraw}"
-           class="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-red-500">
-            Withdraw
-        </a>
-    </div>
+            <!-- Withdraw Button -->
+            <a th:href="@{/withdraw}"
+               class="w-full py-2 px-4 text-center bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                Withdraw
+            </a>
+        </div>
 
-    <!-- Hidden forms for deposit/withdraw (if you prefer POST links) -->
-    <form id="deposit-form" th:action="@{/deposit}" method="post" class="hidden">
-        <input type="hidden" name="accountId" th:value="${customer.id}"/>
-        <input type="hidden" name="amount" value="0"/> <!-- change via JS or direct input when needed -->
-    </form>
-    <form id="withdraw-form" th:action="@{/withdraw}" method="post" class="hidden">
-        <input type="hidden" name="accountId" th:value="${customer.id}"/>
-        <input type="hidden" name="amount" value="0"/>
-    </form>
-
-    <!-- Transaction History -->
-    <div>
-        <h3 class="text-xl font-semibold text-gray-800 mb-4">Transaction History</h3>
-        <div class="divide-y divide-gray-200 max-h-[55vh] overflow-auto">
-            <div th:each="t : ${customer.transactions.reversed()}" class="px-4 py-3 flex justify-between items-center">
-                <div class="flex-1">
-                    <span class="block font-medium text-gray-700" th:text="${t.type}"></span>
-                    <span class="block text-sm text-gray-500" th:text="${#temporals.format(t.timestamp, 'dd-MMM-yyyy')}"></span>
+        <!-- Transaction History -->
+        <div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Transaction History</h3>
+            <div class="divide-y divide-gray-200 max-h-[50vh] overflow-auto">
+                <div th:each="t : ${customer.transactions.reversed()}" class="px-4 py-3 flex justify-between items-center">
+                    <div class="flex-1">
+                        <span class="block font-medium text-gray-700" th:text="${t.type}"></span>
+                        <span class="block text-sm text-gray-500" th:text="${#temporals.format(t.timestamp, 'dd-MMM-yyyy')}"></span>
+                    </div>
+                    <div class="text-gray-800 font-semibold">
+                        ₱<span th:text="${t.amount}"></span>
+                    </div>
                 </div>
-                <div class="text-gray-800 font-semibold">
-                    ₱<span th:text="${t.amount}"></span>
+                <div th:if="${customer.transactions.isEmpty()}" class="px-4 py-3 text-gray-500 text-center">
+                    No transactions yet.
                 </div>
-            </div>
-            <div th:if="${customer.transactions.isEmpty()}" class="px-4 py-3 text-gray-500 text-center">
-                No transactions yet.
             </div>
         </div>
     </div>

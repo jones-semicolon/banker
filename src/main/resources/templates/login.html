@@ -37,7 +37,6 @@
 
     <!-- Login form -->
     <form th:action="@{/login}" method="post" class="space-y-5">
-        <!-- CSRF token (works when CSRF is enabled) -->
         <div th:if="${_csrf != null}">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         </div>
@@ -82,7 +81,7 @@
     </form>
 
     <div class="mt-6 text-center text-xs text-gray-400">
-        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> Banker — simple demo
+        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> Banker — Marjones Lapinig
     </div>
 </div>
 </body>

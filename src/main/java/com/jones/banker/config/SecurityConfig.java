@@ -49,6 +49,10 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
                 )
+                .rememberMe(remember -> remember
+                        .key("#k63|C#}7B^5Tb=>,Od:3:yo@i,9u:")        // use your own secret key
+                        .tokenValiditySeconds(1209600) // 14 days
+                )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()

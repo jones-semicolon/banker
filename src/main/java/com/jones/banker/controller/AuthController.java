@@ -20,6 +20,11 @@ public class AuthController {
         return "register";
     }
 
+    @GetMapping("/")
+    public String dasboardPage(){
+        return "redirect:/dashboard";
+    }
+
     @PostMapping("/register")
     public String register(@ModelAttribute Customer customer, Model model) {
         try {

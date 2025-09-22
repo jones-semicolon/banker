@@ -13,11 +13,15 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+# === IDE files ===
+.idea                     # IntelliJ
 *.iml
 *.ipr
+*.iws
+.vscode/                  # VSCode
+*.swp                     # Vim/Neovim swap files
+.DS_Store                 # macOS metadata
+Thumbs.db                 # Windows metadata
 
 ### NetBeans ###
 /nbproject/private/
@@ -32,4 +36,22 @@ build/
 ### VS Code ###
 .vscode/
 
-/node_modules/
+# === Env & secrets ===
+.env
+application-*.yml
+application-*.properties
+
+# === Node / Tailwind ===
+node_modules/
+dist/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# === Logs & temp ===
+*.log
+logs/
+*.tmp
+*.bak
+*.swp
+*.swo

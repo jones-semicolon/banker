@@ -1,12 +1,16 @@
 package com.jones.banker.controller;
 
 import com.jones.banker.model.Customer;
+import com.jones.banker.model.Transaction;
 import com.jones.banker.service.CustomerService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -19,7 +23,13 @@ public class CustomerController {
         String phone = auth.getName();
         Customer customer = service.findByPhone(phone)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        // Reverse transactions in Java
+        List<Transaction> reversed = new ArrayList<>(customer.getTransactions());
+        Collections.reverse(reversed);
+
         model.addAttribute("customer", customer);
+        model.addAttribute("transactions", reversed);
+
         return "dashboard";
     }
 
@@ -28,7 +38,12 @@ public class CustomerController {
         String phone = auth.getName();
         Customer customer = service.findByPhone(phone)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        // Reverse transactions in Java
+        List<Transaction> reversed = new ArrayList<>(customer.getTransactions());
+        Collections.reverse(reversed);
+
         model.addAttribute("customer", customer);
+        model.addAttribute("transactions", reversed);
         return "withdraw";
     }
 
@@ -54,8 +69,14 @@ public class CustomerController {
     @GetMapping("/transfer")
     public String transferForm(Authentication auth, Model model) {
         String phone = auth.getName();
-        Customer current = service.findByPhone(phone).orElseThrow(() -> new RuntimeException("User not found"));
-        model.addAttribute("customer", current);
+        Customer customer = service.findByPhone(phone)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        // Reverse transactions in Java
+        List<Transaction> reversed = new ArrayList<>(customer.getTransactions());
+        Collections.reverse(reversed);
+
+        model.addAttribute("customer", customer);
+        model.addAttribute("transactions", reversed);
         return "transfer";
     }
 
@@ -102,7 +123,12 @@ public class CustomerController {
         String phone = auth.getName();
         Customer customer = service.findByPhone(phone)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        // Reverse transactions in Java
+        List<Transaction> reversed = new ArrayList<>(customer.getTransactions());
+        Collections.reverse(reversed);
+
         model.addAttribute("customer", customer);
+        model.addAttribute("transactions", reversed);
         return "deposit";
     }
 

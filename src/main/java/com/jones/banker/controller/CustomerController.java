@@ -91,11 +91,14 @@ public class CustomerController {
         String fromPhone = auth.getName();
         Customer sender = service.findByPhone(fromPhone)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
-        if (sender.balance < amount) {
-            m.addAttribute("error", "Maximum amount exceeded");
+        if (amount > sender.getBalance()) {
+            m.addAttribute("error", "Insufficient balance. Maximum you can transfer is ₱" + sender.getBalance());
             m.addAttribute("customer", sender);
             return "transfer";
         }
+
+        Customer recipient = service.findByPhone(recipientPhone)
+                .orElseThrow(() -> new RuntimeException("Recipient not found"));
 
         // If recipient phone is same as sender's phone, reject
         if (recipientPhone.equals(fromPhone)) {

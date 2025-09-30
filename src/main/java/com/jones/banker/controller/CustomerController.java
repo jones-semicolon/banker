@@ -114,7 +114,7 @@ public class CustomerController {
 
         try {
             service.transfer(sender.getId(), recipient.getId(), amount);
-            m.addAttribute("success", True)
+            // m.addAttribute("success", True)
             return "transfer";
             // return "redirect:/dashboard";
         } catch (Exception e) {

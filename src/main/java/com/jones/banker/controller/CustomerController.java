@@ -91,6 +91,11 @@ public class CustomerController {
         String fromPhone = auth.getName();
         Customer sender = service.findByPhone(fromPhone)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
+        if (sender.balance < amount) {
+            m.addAttribute("error", "Maximum amount exceeded");
+            m.addAttribute("customer", sender);
+            return "transfer";
+        }
 
         // If recipient phone is same as sender's phone, reject
         if (recipientPhone.equals(fromPhone)) {
@@ -109,7 +114,9 @@ public class CustomerController {
 
         try {
             service.transfer(sender.getId(), recipient.getId(), amount);
-            return "redirect:/dashboard";
+            m.addAttribute("success", True)
+            return "transfer"
+            // return "redirect:/dashboard";
         } catch (Exception e) {
             m.addAttribute("error", e.getMessage());
             m.addAttribute("customer", sender);
@@ -141,7 +148,7 @@ public class CustomerController {
     ) {
         try {
             service.deposit(accountId, amount);
-            return "redirect:/dashboard";
+            // return "redirect:/dashboard";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             // Also need customer in model

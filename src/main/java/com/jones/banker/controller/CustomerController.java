@@ -48,7 +48,6 @@ public class CustomerController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         try {
             service.withdraw(customer.getId(), amount);
-            model.addAttribute("success", true)
             return "withdraw";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());

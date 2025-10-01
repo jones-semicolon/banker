@@ -118,7 +118,7 @@ public class CustomerController {
             Customer updated = service.findById(customer.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-            addCustomerAndTransactions(updated, model, "Deposit successfull");
+            addCustomerAndTransactions(updated, model, "Deposit successful");
             return "deposit";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());

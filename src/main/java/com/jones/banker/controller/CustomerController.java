@@ -18,19 +18,19 @@ public class CustomerController {
     private final CustomerService service;
     public CustomerController(CustomerService service) { this.service = service; }
 
-    private void addCustomerAndTransactions(Customer customer, Model model) {
+    private void addCustomerAndTransactions(Customer customer, Model model, boolean success) {
         List<Transaction> reversed = new ArrayList<>(customer.getTransactions());
         Collections.reverse(reversed);
         model.addAttribute("customer", customer);
         model.addAttribute("transactions", reversed);
-        model.addAttribute("success", "transaction successful");
+        model.addAttribute("success", success)
     }
 
     @GetMapping("/dashboard")
     public String dashboard(Authentication auth, Model model) {
         Customer customer = service.findByPhone(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        addCustomerAndTransactions(customer, model);
+        addCustomerAndTransactions(customer, model, false);
         return "dashboard";
     }
 
@@ -38,7 +38,7 @@ public class CustomerController {
     public String showWithdrawPage(Authentication auth, Model model) {
         Customer customer = service.findByPhone(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        addCustomerAndTransactions(customer, model);
+        addCustomerAndTransactions(customer, model, false);
         return "withdraw";
     }
 
@@ -48,10 +48,11 @@ public class CustomerController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         try {
             service.withdraw(customer.getId(), amount);
+            model.addAttribute("success", true)
             return "withdraw";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            addCustomerAndTransactions(customer, model);
+            addCustomerAndTransactions(customer, model, false);
             return "withdraw";
         }
     }
@@ -60,7 +61,7 @@ public class CustomerController {
     public String transferForm(Authentication auth, Model model) {
         Customer customer = service.findByPhone(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        addCustomerAndTransactions(customer, model);
+        addCustomerAndTransactions(customer, model, false);
         return "transfer";
     }
 
@@ -74,20 +75,20 @@ public class CustomerController {
 
         if (amount > sender.getBalance()) {
             m.addAttribute("error", "Insufficient balance.");
-            addCustomerAndTransactions(sender, m);
+            addCustomerAndTransactions(sender, m, false);
             return "transfer";
         }
 
         if (recipientPhone.equals(sender.getPhone())) {
             m.addAttribute("error", "Cannot transfer to your own account.");
-            addCustomerAndTransactions(sender, m);
+            addCustomerAndTransactions(sender, m, false);
             return "transfer";
         }
 
         Optional<Customer> maybeRecipient = service.findByPhone(recipientPhone);
         if (maybeRecipient.isEmpty()) {
             m.addAttribute("error", "Recipient not found.");
-            addCustomerAndTransactions(sender, m);
+            addCustomerAndTransactions(sender, m, false);
             return "transfer";
         }
 
@@ -96,7 +97,7 @@ public class CustomerController {
             return "redirect:/dashboard";
         } catch (Exception e) {
             m.addAttribute("error", e.getMessage());
-            addCustomerAndTransactions(sender, m);
+            addCustomerAndTransactions(sender, m, false);
             return "transfer";
         }
     }
@@ -105,7 +106,7 @@ public class CustomerController {
     public String showDepositPage(Authentication auth, Model model) {
         Customer customer = service.findByPhone(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        addCustomerAndTransactions(customer, model);
+        addCustomerAndTransactions(customer, model, false);
         return "deposit";
     }
 
@@ -115,10 +116,14 @@ public class CustomerController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         try {
             service.deposit(customer.getId(), amount);
+            Customer updated = service.findById(customer.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+            addCustomerAndTransactions(updated, model, true);
             return "deposit";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            addCustomerAndTransactions(customer, model);
+            addCustomerAndTransactions(customer, model, false);
             return "deposit";
         }
     }

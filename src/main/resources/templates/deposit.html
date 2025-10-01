@@ -134,35 +134,23 @@
       </div>
     </main>
     <div
-      id="successModal"
-      th:classappend="${success} != null ? '' : 'hidden'"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      th:if="${success} != null"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
-      <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+      <div class="bg-white rounded-lg shadow-lg w-96 p-6 relative">
+        <!-- Close button -->
         <button
-          type="button"
-          onclick="document.getElementById('successModal').classList.add('hidden')"
-          class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+          onclick="this.parentElement.parentElement.style.display='none'"
+          class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          ✕
         </button>
 
-        <div class="text-center">
+        <!-- Check Icon -->
+        <div class="flex justify-center mb-4">
           <svg
-            class="mx-auto mb-4 text-green-500 w-12 h-12"
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-16 w-16 text-green-500"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -171,18 +159,19 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M9 12l2 2l4-4m6 2a9 9 0 11-18 0a9 9 0 0118 0z"
+              d="M5 13l4 4L19 7"
             />
           </svg>
+        </div>
 
-          <h3
-            class="text-lg font-medium text-gray-800 mb-4"
-            th:text="${success}"
-          ></h3>
+        <!-- Message -->
+        <p class="text-center text-lg font-semibold" th:text="${success}"></p>
 
+        <!-- Buttons -->
+        <div class="mt-6 flex justify-center space-x-3">
           <a
             href="/dashboard"
-            class="inline-block px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Back to Dashboard
           </a>

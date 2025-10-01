@@ -23,7 +23,7 @@ public class CustomerController {
         Collections.reverse(reversed);
         model.addAttribute("customer", customer);
         model.addAttribute("transactions", reversed);
-        model.addAttribute("success", "transaction successful")
+        model.addAttribute("success", "transaction successful");
     }
 
     @GetMapping("/dashboard")

@@ -156,5 +156,50 @@
         </div>
       </div>
     </main>
+    <div
+            th:if="${success} != null"
+            class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+    >
+        <div class="bg-white rounded-lg shadow-lg w-96 p-6 relative">
+            <!-- Close button -->
+            <button
+                    onclick="this.parentElement.parentElement.style.display='none'"
+                    class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+            >
+                ✕
+            </button>
+
+            <!-- Check Icon -->
+            <div class="flex justify-center mb-4">
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-16 w-16 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                >
+                    <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                    />
+                </svg>
+            </div>
+
+            <!-- Message -->
+            <p class="text-center text-lg font-semibold" th:text="${success}"></p>
+
+            <!-- Buttons -->
+            <div class="mt-6 flex justify-center space-x-3">
+                <a
+                        href="/dashboard"
+                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
   </body>
 </html>

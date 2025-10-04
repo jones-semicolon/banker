@@ -48,6 +48,7 @@ public class CustomerController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         try {
             service.withdraw(customer.getId(), amount);
+            addCustomerAndTransactions(customer, model, "Withdraw successful");
             return "withdraw";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -68,35 +69,36 @@ public class CustomerController {
     public String transfer(Authentication auth,
                            @RequestParam String recipientPhone,
                            @RequestParam double amount,
-                           Model m) {
+                           Model model) {
         Customer sender = service.findByPhone(auth.getName())
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
 
         if (amount > sender.getBalance()) {
-            m.addAttribute("error", "Insufficient balance.");
-            addCustomerAndTransactions(sender, m, null);
+            model.addAttribute("error", "Insufficient balance.");
+            addCustomerAndTransactions(sender, model, null);
             return "transfer";
         }
 
         if (recipientPhone.equals(sender.getPhone())) {
-            m.addAttribute("error", "Cannot transfer to your own account.");
-            addCustomerAndTransactions(sender, m, null);
+            model.addAttribute("error", "Cannot transfer to your own account.");
+            addCustomerAndTransactions(sender, model, null);
             return "transfer";
         }
 
         Optional<Customer> maybeRecipient = service.findByPhone(recipientPhone);
         if (maybeRecipient.isEmpty()) {
-            m.addAttribute("error", "Recipient not found.");
-            addCustomerAndTransactions(sender, m, null);
+            model.addAttribute("error", "Recipient not found.");
+            addCustomerAndTransactions(sender, model, null);
             return "transfer";
         }
 
         try {
             service.transfer(sender.getId(), maybeRecipient.get().getId(), amount);
-            return "redirect:/dashboard";
+            addCustomerAndTransactions(sender, model, "Transfer successful");
+            return "transfer";
         } catch (Exception e) {
-            m.addAttribute("error", e.getMessage());
-            addCustomerAndTransactions(sender, m, null);
+            model.addAttribute("error", e.getMessage());
+            addCustomerAndTransactions(sender, model, null);
             return "transfer";
         }
     }
